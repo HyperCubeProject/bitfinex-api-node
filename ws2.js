@@ -36,7 +36,7 @@ class BitfinexWS2 extends EventEmitter {
     try {
       msg = JSON.parse(msg)
     } catch (e) {
-      console.error('[bfx ws2 error] received invalid json')
+      console.error('[bfx ws2 error] received invalid json')
       console.error('[bfx ws2 error]', msg)
       console.trace()
       return
@@ -45,10 +45,12 @@ class BitfinexWS2 extends EventEmitter {
     debug('Received message: %j', msg)
     debug('Emited message event')
     this.emit('message', msg, flags)
+
     if (!Array.isArray(msg) && msg.event) {
       if (msg.event === 'subscribed') {
+
         debug('Subscription report received')
-          // Inform the user the new event name that will be triggered
+        // Inform the user the new event name that will be triggered
         const data = {
           channel: msg.channel,
           chanId: msg.chanId,
@@ -60,16 +62,17 @@ class BitfinexWS2 extends EventEmitter {
           data.prec = msg.prec
         }
 
-          // Save to event map
+        // Save to event map
         this.channelMap[msg.chanId] = data
         debug('Emitting \'subscribed\' %j', data)
-          /**
-           * @event BitfinexWS#subscribed
-           * @type {object}
-           * @property {string} channel - Channel type
-           * @property {string} symbol - Symbol of the asset in question (either a trading pair or a funding currency)
-           * @property {number} chanId - Channel ID sended by Bitfinex
-           */
+
+        /**
+         * @event BitfinexWS#subscribed
+         * @type {object}
+         * @property {string} channel - Channel type
+         * @property {string} symbol - Symbol of the asset in question (either a trading pair or a funding currency)
+         * @property {number} chanId - Channel ID sended by Bitfinex
+         */
         this.emit('subscribed', data)
       } else if (msg.event === 'auth' && msg.status !== 'OK') {
         this.emit('error', msg)
@@ -78,10 +81,12 @@ class BitfinexWS2 extends EventEmitter {
         this.channelMap[msg.chanId] = {
           channel: 'auth'
         }
+
         debug('Emitting \'%s\' %j', msg.event, msg)
-          /**
-           * @event BitfinexWS#auth
-           */
+
+        /**
+         * @event BitfinexWS#auth
+         */
         this.emit(msg.event, msg)
       } else {
         debug('Emitting \'%s\' %j', msg.event, msg)
@@ -101,58 +106,56 @@ class BitfinexWS2 extends EventEmitter {
     if (!event) return
 
     debug('Message in \'%s\' channel', event.channel)
-    if (event.channel === 'book') {
-      this._processBookEvent(msg, event)
-    } else if (event.channel === 'trades') {
-      this._processTradeEvent(msg, event)
-    } else if (event.channel === 'ticker') {
-      this._processTickerEvent(msg, event)
-    } else if (event.channel === 'auth') {
-      this._processUserEvent(msg)
-    } else {
-      debug('Message in unknown channel')
+
+    // Heartbeat
+    if (msg[0] === 'hb') {
+      return debug('Received HeatBeart in user channel')
     }
+
+    const handlers = {
+      book: this._processBookEvent,
+      trades: this._processTradeEvent,
+      ticker: this._processTickerEvent,
+      auth: this._processUserEvent,
+    }
+
+    const handler = !handlers[event.channel]
+
+    if (!handler) {
+      return debug('Message in unknown channel')
+    }
+
+    handler(msg, event)
   }
 
   _processUserEvent (msg) {
-    if (msg[0] === 'hb') { // HeatBeart
-      debug('Received HeatBeart in user channel')
-      return
-    }
-
     let event = msg[0]
     const data = msg[1]
+
     if (event === 'n') { // Notification
       event = data[1]
       this.emit(event, data)
-      debug('Emitting \'%s\', %j', event, data)
     } else if (data.length) { // Update
-      debug('Emitting \'%s\', %j', event, data)
       this.emit(event, data)
     }
+
+    debug('Emitting \'%s\', %j', event, data)
   }
 
-  _processTickerEvent (msg, event) {
-    if (msg[0] === 'hb') { // HeatBeart
-      debug('Received HeatBeart in %s ticker channel', event.symbol)
-      return
-    }
-
-    msg = msg[0]
-
+  _processTickerEvent ([msg], event) {
     const res = this.transformer(msg, 'ticker', event.symbol)
     debug('Emitting ticker, %s, %j', event.symbol, res)
     this.emit('ticker', event.symbol, res)
   }
 
-  _processBookEvent (msg, event) {
-    if (msg[0] === 'hb') { // HeatBeart
-      debug('Received HeatBeart in %s book channel', event.symbol)
-      return
-    }
+  _processCandleEvent ([msg], event) {
+    const type = event.prec === 'R0' ? 'orderbookRaw' : 'orderbook'
+    const res = this.transformer(msg, type, event.symbol)
+    debug('Emitting orderbook, %s, %j', event.symbol, res)
+    this.emit('orderbook', event.symbol, res)
+  }
 
-    msg = msg[0]
-
+  _processBookEvent ([msg], event) {
     const type = event.prec === 'R0' ? 'orderbookRaw' : 'orderbook'
     const res = this.transformer(msg, type, event.symbol)
     debug('Emitting orderbook, %s, %j', event.symbol, res)
@@ -160,10 +163,6 @@ class BitfinexWS2 extends EventEmitter {
   }
 
   _processTradeEvent (msg, event) {
-    if (msg[0] === 'hb') { // HeatBeart
-      debug('Received HeatBeart in %s trade channel', event.symbol)
-      return
-    }
 
     if (isSnapshot(msg)) {
       msg = msg[0]

@@ -95,8 +95,8 @@ class Rest2 {
   // sections: 'last', 'hist'
   // note: query params can be added: see
   // http://docs.bitfinex.com/v2/reference#rest-public-candles
-  candles ({timeframe = '1m', symbol = 'tBTCUSD', section = 'hist'}, cb) {
-    return this.makePublicRequest(`stats1/trade:${timeframe}:${symbol}/${section}`, cb)
+  candles ({timeframe = '1m', symbol = 'tBTCUSD', section = 'hist', query = ''}, cb) {
+    return this.makePublicRequest(`candles/trade:${timeframe}:${symbol}/${section}?${query}`, cb)
   }
 
   // TODO
