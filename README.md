@@ -1,18 +1,16 @@
-# Bitfinex Trading API for Node.JS. Bitcoin, Ether and Litecoin trading
-=========
+# Bitfinex Api Node
 
 [![Build Status](https://travis-ci.org/bitfinexcom/bitfinex-api-node.svg?branch=master)](https://travis-ci.org/bitfinexcom/bitfinex-api-node)
 
-A Node.JS reference implementation of the Bitfinex API. See the full docs at <http://bitfinexcom.github.io/bitfinex-api-node/>
+A Node.JS reference implementation of the Bitfinex API. See the full docs on our [website](http://bitfinexcom.github.io/bitfinex-api-node)
 
 * Official implementation
 * REST API
 * WebSockets API
 
 ## Installation
-```bash
-  npm install bitfinex-api-node
-```
+
+    npm install bitfinex-api-node
 
 ## Usage
 
@@ -56,9 +54,9 @@ bws.on('error', console.error)
 
 ## new BFX(API_KEY, API_SECRET, opts)
 
-Where opts can be:
+Where `opts` can be described as:
 
-```
+```js
 const opts = {
   // use v1 or v2 of the API, values: 1, 2
   version: 2,
@@ -92,22 +90,16 @@ To make dealing with snapshots better predictable, snapshots are emitted as an a
 
 Lists of raw orderbooks (`R0`) are ordered in the same order as `P0`, `P1`, `P2`, `P3`
 
-
 ## Tests
 
-```bash
-npm test
-```
+    npm test
 
 ## Contributing
 
-```
 We are following the [standard JavaScript Style Guide](https://github.com/feross/standard).
 Add unit tests for any new or changed functionality. Lint and test your code.
-```
 
 ## Release History
-```
+
 * 0.0.1 Initial release
 * 0.3.0 Added support for v2 API
-```
