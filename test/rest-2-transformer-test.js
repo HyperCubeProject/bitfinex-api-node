@@ -7,14 +7,13 @@ const PORT = 1337
 const assert = require('assert')
 const http = require('http')
 
+const REST2 = require('../rest2.js')
+const transformer = require('../lib/transformer.js')
+
 const API_KEY = 'dummy'
 const API_SECRET = 'dummy'
 
-const REST2 = require('../rest2.js')
-const transform = require('../lib/transformer.js')
-
-const bhttp = new REST2(API_KEY, API_SECRET, { transformer: transform })
-bhttp.url = `http://localhost:${PORT}`
+const bhttp = REST2(API_KEY, API_SECRET, { transformer, url: `http://localhost:${PORT}` })
 
 const testResBody = `[1765.3,
   0.56800816,

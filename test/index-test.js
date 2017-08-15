@@ -42,10 +42,13 @@ describe('BFX', () => {
       1726.3 ]`
 
     it('supports http', (done) => {
-      const bfx = new BFX('dummy', 'dummy', { version: 2, autoOpen: false })
+      const bfx = new BFX('dummy', 'dummy', {
+        version: 2,
+        autoOpen: false,
+        url: `http://localhost:${PORT}`
+      })
 
       const bhttp = bfx.rest
-      bhttp.url = `http://localhost:${PORT}`
 
       const server = http.createServer((req, res) => {
         res.writeHead(200, {
@@ -55,8 +58,7 @@ describe('BFX', () => {
       })
 
       server.listen(PORT, () => {
-        bhttp.ticker('tBTCUSD', (err, res) => {
-          assert.equal(err, null)
+        bhttp.ticker('tBTCUSD').then(res => {
           assert.deepEqual(
             res,
             JSON.parse(testResBody)
@@ -69,10 +71,14 @@ describe('BFX', () => {
     })
 
     it('supports transforming', (done) => {
-      const bfx = new BFX('dummy', 'dummy', { version: 2, transform: true, autoOpen: false })
+      const bfx = new BFX('dummy', 'dummy', {
+        version: 2,
+        transform: true,
+        autoOpen: false,
+        url: `http://localhost:${PORT}`
+      })
 
       const bhttp = bfx.rest
-      bhttp.url = `http://localhost:${PORT}`
 
       const server = http.createServer((req, res) => {
         res.writeHead(200, {
@@ -82,8 +88,7 @@ describe('BFX', () => {
       })
 
       server.listen(PORT, () => {
-        bhttp.ticker('tBTCUSD', (err, res) => {
-          assert.equal(err, null)
+        bhttp.ticker('tBTCUSD').then(res => {
           assert.deepEqual(
             res,
             {

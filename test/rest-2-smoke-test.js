@@ -12,8 +12,7 @@ const API_SECRET = 'dummy'
 
 const REST2 = require('../rest2.js')
 
-const bhttp = new REST2(API_KEY, API_SECRET)
-bhttp.url = `http://localhost:${PORT}`
+const bhttp = REST2(API_KEY, API_SECRET, { url: `http://localhost:${PORT}` })
 
 const testResBody = `[1765.3,
   0.56800816,

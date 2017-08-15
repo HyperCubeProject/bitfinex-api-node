@@ -9,18 +9,19 @@ const identity = d => d
 
 const factory = (key, secret, opts = {}) => {
 
+  const URL = opts.url || BASE
+  const transformer = opts.transformer || identity
+
   const nonceGen = typeof opts.nonceGenerator === 'function'
     ? opts.nonceGenerator
     : () => Date.now()
-
-  const transformer = opts.transformer || identity
 
   const makeAuthRequest = (path, json = {}) => {
     if (!key || !secret) {
       throw new Error('missing api key or secret')
     }
 
-    const url = `${BASE}/${VERSION}/${path}`
+    const url = `${URL}/${VERSION}/${path}`
     const nonce = JSON.stringify(nonceGen())
     const rawBody = JSON.stringify(payload)
 
@@ -43,7 +44,7 @@ const factory = (key, secret, opts = {}) => {
   }
 
   const makePublicRequest = name => {
-    const url = `${BASE}/${VERSION}/${name}`
+    const url = `${URL}/${VERSION}/${name}`
 
     return rp({
       url,
@@ -75,13 +76,13 @@ const factory = (key, secret, opts = {}) => {
   // Auth endpoints
 
   const alertList = (type = 'price') =>
-    makeAuthRequest(`/auth/r/alerts?type=${type}`, null)
+    makeAuthRequest(`auth/r/alerts?type=${type}`, null)
 
   const alertSet = (type = 'price', symbol = 'tBTCUSD', price = 0) =>
-    makeAuthRequest(`/auth/w/alert/set`, { type, symbol, price })
+    makeAuthRequest('auth/w/alert/set', { type, symbol, price })
 
   const alertDelete = (symbol = 'tBTCUSD', price = 0) =>
-    makeAuthRequest(`/auth/w/alert/set`, { symbol, price })
+    makeAuthRequest('auth/w/alert/set', { symbol, price })
 
   // TODO
   // - Trades
