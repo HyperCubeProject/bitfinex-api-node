@@ -2,32 +2,22 @@
   "name": "bitfinex-api-node",
   "version": "1.0.3",
   "description": "Node reference library for Bitfinex API",
-  "engines": {
-    "node": ">=6"
+  "author": "Josh Rossi <josh@bitfinex.com> (https://www.bitfinex.com)",
+  "bugs": {
+    "url": "https://github.com/bitfinexcom/bitfinex-api-node/issues"
   },
+  "homepage": "http://bitfinexcom.github.io/bitfinex-api-node/",
   "main": "index.js",
   "scripts": {
     "lint": "standard",
-    "test": "npm run lint && npm run unit",
-    "unit": "NODE_ENV=test istanbul cover _mocha -- -R spec -b --recursive",
-    "test-without-coverage": "NODE_ENV=test mocha -R spec -b --recursive",
+    "cover": "NODE_ENV=test istanbul cover _mocha -- -R spec -b --recursive",
+    "test": "NODE_ENV=test mocha -R spec -b --recursive",
     "docs": "node_modules/jsdoc-to-markdown/bin/cli.js ws.js > DOCS.md"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/bitfinexcom/bitfinex-api-node.git"
   },
-  "keywords": [
-    "bitfinex",
-    "bitcoin",
-    "BTC"
-  ],
-  "author": "Josh Rossi <josh@bitfinex.com> (https://www.bitfinex.com)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/bitfinexcom/bitfinex-api-node/issues"
-  },
-  "homepage": "http://bitfinexcom.github.io/bitfinex-api-node/",
   "devDependencies": {
     "chai": "^3.4.1",
     "debug": "^2.2.0",
@@ -42,5 +32,17 @@
     "request": "^2.67.0",
     "request-promise": "^4.2.0",
     "ws": "^3.0.0"
-  }
+  },
+  "standard": {
+    "globals": ["describe", "it"]
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "keywords": [
+    "bitfinex",
+    "bitcoin",
+    "BTC"
+  ],
+  "license": "MIT"
 }

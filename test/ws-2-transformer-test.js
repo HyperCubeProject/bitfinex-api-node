@@ -1,14 +1,12 @@
-/* eslint-env mocha */
-
 'use strict'
-const PORT = 1337
 
 const assert = require('assert')
-
 const WebSocket = require('ws')
-const BFX = require('../index.js')
 
+const BFX = require('../index')
 const stubResponseOrderbookP0 = require('./fixtures/response-ws2-server-order-book-P0.json')
+
+const PORT = 1337
 
 describe('ws-2-transforms', () => {
   it('websocket transforming with snapshots: orderbooks', (done) => {
@@ -17,7 +15,7 @@ describe('ws-2-transforms', () => {
       port: PORT
     })
 
-    const bws = new BFX('dummy', 'dummy', { version: 2, transform: true, autoOpen: false }).ws
+    const bws = BFX('dummy', 'dummy', { version: 2, transform: true, autoOpen: false }).ws
 
     bws.websocketURI = `ws://localhost:${PORT}`
     bws.open()

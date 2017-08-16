@@ -1,19 +1,15 @@
-/* eslint-env mocha */
-
 'use strict'
 
 const assert = require('assert')
 
-const BfxWs = require('../ws2.js')
-const transformer = require('../lib/transformer.js')
+const BfxWs = require('../ws')
+const transformer = require('../lib/transformer')
 
 const API_KEY = 'dummy'
 const API_SECRET = 'dummy'
 
-const bfxWs = new BfxWs(
-  API_KEY,
-  API_SECRET
-)
+const identity = d => d
+const bfxWs = new BfxWs(API_KEY, API_SECRET, { transformer: identity })
 
 const stubOrderbookSnapshot = require('./fixtures/response-ws2-server-order-book-P1.json')
 const stubTradesSnapshot = require('./fixtures/response-ws2-server-trades.json')
@@ -46,13 +42,7 @@ describe('channel msg handling', () => {
   })
 
   it('transforms & normalizes well - R0 update', (done) => {
-    const bfxWs = new BfxWs(
-      API_KEY,
-      API_SECRET,
-      {
-        transformer: transformer
-      }
-    )
+    const bfxWs = new BfxWs(API_KEY, API_SECRET, { transformer })
 
     bfxWs.channelMap = {
       3689: { channel: 'book', prec: 'R0', symbol: 'tBTCUSD' }

@@ -3,10 +3,10 @@
 const assert = require('assert')
 const _clone = require('lodash/clone')
 
-const transformer = require('../lib/transformer.js')
+const transformer = require('../lib/transformer')
 
-const stubResponseTickerFunding = require('./fixtures/response-ticker-funding.json')
 const stubResponseTickerPairs = require('./fixtures/response-ticker-pairs.json')
+const stubResponseTickerFunding = require('./fixtures/response-ticker-funding.json')
 
 const stubResponseOrderbooksP1 = _clone(require('./fixtures/response-ws2-server-order-book-P1.json'))
 stubResponseOrderbooksP1.shift()
@@ -75,26 +75,5 @@ describe('transformer', () => {
       res[0],
       { PRICE: 1779, COUNT: 1, AMOUNT: 42.11518492 }
     )
-  })
-
-  it('normalizes names for the rest2 client', () => {
-    assert.deepEqual(
-      transformer.normalize('ticker/tBTCUSD'),
-      { symbol: 'tBTCUSD', type: 'ticker' }
-    )
-  })
-
-  it('normalize doesnt throw if called undefined value', () => {
-    transformer.normalize(undefined)
-  })
-
-  it('normalize gets subtype for trading pair', () => {
-    const subtype = transformer.getSubtype('tBTCUSD')
-    assert.equal(subtype, 'tradingPairs')
-  })
-
-  it('normalize gets subtype for funding currency', () => {
-    const subtype = transformer.getSubtype('fUSD')
-    assert.equal(subtype, 'fundingCurrencies')
   })
 })

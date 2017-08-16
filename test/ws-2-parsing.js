@@ -1,13 +1,11 @@
-/* eslint-env mocha */
-
 'use strict'
-const PORT = 1337
 
 const assert = require('assert')
 
 const WebSocket = require('ws')
-const BfxWs = require('../ws2.js')
+const BfxWs = require('../ws')
 
+const PORT = 1337
 const API_KEY = 'dummy'
 const API_SECRET = 'dummy'
 
