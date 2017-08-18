@@ -56,7 +56,7 @@ class BitfinexWS2 extends EventEmitter {
         const data = {
           channel: msg.channel,
           chanId: msg.chanId,
-          symbol: msg.symbol
+          symbol: msg.symbol ? msg.symbol : msg.key.split(':').slice(-1)[0],
         }
 
         // https://github.com/bitfinexcom/bitfinex-api-node/issues/37
@@ -118,7 +118,8 @@ class BitfinexWS2 extends EventEmitter {
       book: this._processBookEvent.bind(this),
       trades: this._processTradeEvent.bind(this),
       ticker: this._processTickerEvent.bind(this),
-      auth: this._processUserEvent.bind(this)
+      auth: this._processUserEvent.bind(this),
+      candles: this._processCandleEvent.bind(this),
     }
 
     const handler = handlers[event.channel]
@@ -196,13 +197,21 @@ class BitfinexWS2 extends EventEmitter {
     this.ws.send(JSON.stringify(msg))
   }
 
+  subscribeCandles (symbol = 'tBTCUSD', frame = '1m') {
+    this.send({
+      event: 'subscribe',
+      channel: 'candles',
+      key: `trade:${frame}:${symbol}`,
+    })
+  }
+
   subscribeOrderBook (symbol = 'tBTCUSD', precision = 'P0', length = '25') {
     this.send({
       event: 'subscribe',
       channel: 'book',
       symbol,
       len: length,
-      prec: precision
+      prec: precision,
     })
   }
 
@@ -210,7 +219,7 @@ class BitfinexWS2 extends EventEmitter {
     this.send({
       event: 'subscribe',
       channel: 'trades',
-      symbol
+      symbol,
     })
   }
 
@@ -218,14 +227,14 @@ class BitfinexWS2 extends EventEmitter {
     this.send({
       event: 'subscribe',
       channel: 'ticker',
-      symbol
+      symbol,
     })
   }
 
   unsubscribe (chanId) {
     this.send({
       event: 'unsubscribe',
-      chanId
+      chanId,
     })
   }
 
@@ -235,14 +244,14 @@ class BitfinexWS2 extends EventEmitter {
 
   cancelOrder (orderId) {
     this.send([0, 'oc', null, {
-      id: orderId
+      id: orderId,
     }])
   }
 
   config (flags) {
     this.send({
       flags,
-      event: 'conf'
+      event: 'conf',
     })
   }
 
@@ -256,7 +265,7 @@ class BitfinexWS2 extends EventEmitter {
       authSig: signature,
       authPayload: payload,
       authNonce: +authNonce + 1,
-      calc
+      calc,
     })
   }
 }
