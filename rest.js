@@ -13,31 +13,31 @@ const factory = (key, secret, opts = {}) => {
     ? opts.nonceGenerator
     : () => Date.now()
 
-  const makeAuthRequest = (path, json = {}) => {
+  const makeAuthRequest = (path, body = {}) => {
     if (!key || !secret) {
       throw new Error('missing api key or secret')
     }
 
     const url = `${URL}/${VERSION}/${path}`
     const nonce = JSON.stringify(nonceGen())
-    const rawBody = JSON.stringify(json)
+    const rawBody = JSON.stringify(body)
 
     const signature = crypto
       .createHmac('sha384', secret)
-      .update(`/api/${url}${nonce}${rawBody}`)
+      .update(`/api/${VERSION}${path}${nonce}${rawBody}`)
       .digest('hex')
 
     return rp({
       url,
       method: 'POST',
+      json: true,
       headers: {
         'bfx-nonce': nonce,
         'bfx-apikey': key,
         'bfx-signature': signature
       },
-      json
+      body,
     })
-    .then(response => JSON.parse(response))
   }
 
   const makePublicRequest = name => {
