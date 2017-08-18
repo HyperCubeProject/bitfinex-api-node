@@ -151,10 +151,9 @@ class BitfinexWS2 extends EventEmitter {
   }
 
   _processCandleEvent ([msg], event) {
-    const type = event.prec === 'R0' ? 'orderbookRaw' : 'orderbook'
-    const res = this.transformer(msg, type, event.symbol)
-    debug('Emitting orderbook, %s, %j', event.symbol, res)
-    this.emit('orderbook', event.symbol, res)
+    const res = this.transformer(msg, 'candles', event.symbol)
+    debug('Emitting candles, %s, %j', event.symbol, res)
+    this.emit('candles', event.symbol, res)
   }
 
   _processBookEvent ([msg], event) {
