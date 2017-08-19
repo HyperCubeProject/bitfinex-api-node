@@ -70,6 +70,12 @@ const factory = (key, secret, opts = {}) => {
   const candles = ({timeframe = '1m', symbol = 'tBTCUSD', section = 'hist', query = ''}) =>
     makePublicRequest(`candles/trade:${timeframe}:${symbol}/${section}?${query}`)
 
+  const trades = ({ symbol = 'tBTCUSD' }) =>
+    makePublicRequest(`trades/${symbol}/hist`)
+
+  const lends = ({ currency = 'BTC' }) =>
+    makePublicRequest(`lends/${symbol}`)
+
   // Auth endpoints
 
   const alertList = (type = 'price') =>
@@ -102,6 +108,8 @@ const factory = (key, secret, opts = {}) => {
     tickers,
     stats,
     candles,
+    trades,
+    lends,
 
     alertList,
     alertSet,
