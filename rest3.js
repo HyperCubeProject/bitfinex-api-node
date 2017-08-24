@@ -18,18 +18,18 @@ const factory = (key, secret, opts = {}) => {
     }
 
     const v2 = path.includes('v2/')
-    const url = `${BASE_URL}/${path}`
+    const url = `${BASE_URL}${path}`
     const nonce = JSON.stringify(nonceGen())
     const rawBody = JSON.stringify(body)
 
     const payload = new Buffer(JSON.stringify(Object.assign({
-      request: `/${path}`,
+      request: path,
       nonce,
     }, body))).toString('base64')
 
     const signature = crypto
       .createHmac('sha384', secret)
-      .update(v2 ? `/api/${path}${nonce}${rawBody}` : payload)
+      .update(v2 ? `/api${path}${nonce}${rawBody}` : payload)
       .digest('hex')
 
     return rp({
