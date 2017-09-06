@@ -1,7 +1,7 @@
 'use strict'
 
-const REST = require('./rest3.js')
-const WS2 = require('./ws2.js')
+const REST = require('./rest')
+const WS2 = require('./ws2')
 
 const defaultTransform = require('./lib/transformer')
 
@@ -14,7 +14,7 @@ const BFX = (apiKey, apiSecret, opts = {}) => {
     ? opts.transformer
     : opts.transformer === false ? identity : defaultTransform
 
-  const rest = REST(apiKey, apiSecret, { transformer, url })
+  const rest = REST(apiKey, apiSecret, { url })
   const ws = new WS2(apiKey, apiSecret, { transformer, websocketURI, autoOpen })
 
   return { rest, ws }
